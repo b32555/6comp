@@ -1,0 +1,30 @@
+import numpy as np
+
+def f(x):
+    return np.exp(x[0]**2 + x[1]**2) + np.log(4 + x[0]**2 + 2*x[2]**2)
+
+def coordinate_descent(f, x0, num_iterations=1000, tol=1e-6):
+    x = np.array(x0, dtype=float)
+    n = len(x)
+    
+    for _ in range(num_iterations):
+        x_old = np.copy(x)
+        
+        for i in range(n):
+            def fi(xi):
+                x_temp = np.copy(x)
+                x_temp[i] = xi
+                return f(x_temp)
+            
+            x[i] = minimize_scalar(fi).x
+        
+        if np.linalg.norm(x - x_old, ord=2) < tol:
+            break
+    
+    return x
+
+# Initial guess
+x0 = [0.0, 0.0, 0.0]
+optimal_x = coordinate_descent(f, x0)
+print("Optimal x:", optimal_x)
+print("Optimal f(x):", f(optimal_x))
